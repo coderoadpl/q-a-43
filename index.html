@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title>Document</title>
+</head>
+
+<body>
+
+  <script>
+    const calculatedSum = (bills) => {
+      const sum = Object.entries(bills).reduce((r, [value, number]) => {
+        return r + value * number
+      }, 0);
+      return sum;
+    };
+
+    const atm = (bills, amount) => {
+      const sum = calculatedSum(bills)
+      if (sum < amount) return false
+
+      const sortedBillsEntries = Object.entries(bills).sort(([a],[b]) => b - a)
+
+      return sortedBillsEntries.reduce((r, [value, numberOfBills]) => {
+        const reducedSum = calculatedSum(r)
+        const remainingAmount = amount - reducedSum
+        const calculatedNumberOfBills = (remainingAmount - (remainingAmount % Number(value))) / value
+        return {
+          ...r,
+          [value]: calculatedNumberOfBills > numberOfBills ? numberOfBills : calculatedNumberOfBills
+        }
+      }, {})
+    };
+
+    const defaultBills = {
+      50: 10,
+      20: 30,
+      10: 30,
+      5: 20
+    };
+
+    console.log(calculatedSum(defaultBills)); // 1500 CHECKED
+    console.log(atm(defaultBills, 2000)); // false CHECKED
+    console.log(atm(defaultBills, 60)); // { 50: 1, 10: 1 }
+    console.log(atm(defaultBills, 500)); // { 50: 10 }
+    console.log(atm(defaultBills, 40)); // { 20: 2 }
+    console.log(atm(defaultBills, 47)); // { 20: 2, 5: 1 }
+
+  </script>
+
+</body>
+
+</html>
